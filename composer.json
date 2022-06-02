@@ -1,0 +1,11 @@
+{
+    "name": "pcat/active-record",
+    "autoload": {
+        "psr-4": {
+            "Pcat\\ActiveRecord\\": "src/"
+        }
+    },
+    "require": {
+        "twig/twig": "^3.0"
+    }
+}
