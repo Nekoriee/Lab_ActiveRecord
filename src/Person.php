@@ -11,11 +11,9 @@ class Person
     private $age;
     private $connection;
 
-    public function __construct()
-    {
+    public function __construct() {
         $this->connection = new PDO('mysql:dbname=testdb;host=127.0.0.1', 'pcat', 'basedcat');
     }
-
 
     public function getId()
     {
@@ -47,11 +45,59 @@ class Person
         $this->age = $age;
     }
 
+    public function findById($id): ?Person {
+        $sql = 'SELECT * from person WHERE id=:id LIMIT 1';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
+        $result = $stmt->fetchAll()[0];
+        $foundPerson = null;
+        if (isset($result)) {
+            $foundPerson = new Person();
+            $foundPerson->setId($result['id']);
+            $foundPerson->setName($result['name']);
+            $foundPerson->setAge($result['age']);
+        }
+        return $foundPerson;
+    }
+
     public function getAll() {
         $sql = 'SELECT * from person';
         $stmt = $this->connection->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
+    }
+
+    public function save() {
+        $id = $this->id;
+        $name = $this->name;
+        $age = $this->age;
+        $sql = 'INSERT INTO person(id, name, age) values(:id, :name, :age)';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam('id', $id);
+        $stmt->bindParam('name', $name);
+        $stmt->bindParam('age', $age);
+        $stmt->execute();
+    }
+
+    public function update() {
+        $id = $this->id;
+        $name = $this->name;
+        $age = $this->age;
+        $sql = 'UPDATE person SET name=:name, age=:age WHERE id=:id';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam('id', $id);
+        $stmt->bindParam('name', $name);
+        $stmt->bindParam('age', $age);
+        $stmt->execute();
+    }
+
+    public function delete() {
+        $id = $this->id;
+        $sql = 'DELETE FROM person WHERE id=:id';
+        $stmt = $this->connection->prepare($sql);
+        $stmt->bindParam('id', $id);
+        $stmt->execute();
     }
 
 }
